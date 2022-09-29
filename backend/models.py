@@ -243,20 +243,3 @@ def get_books_borrowed_in_certain_time(db, start_date=0, end_date=0, flag=True):
     for book in books_query:
         books.append(book.format())
     return books
-
-
-def get_books_borrowed_by_id(id, user=True):
-    # /Books/Borrowed/{UserID}
-    if user:
-        books_query = db.session.query(BorrowersRecordDetails).join(Book).filter(
-            BorrowersRecordDetails.book_ID == Book.book_ID).filter(BorrowersRecordDetails.borrowers_ID == id).all()
-
-    else:
-        # /Books/Borrowed/{BookID}
-        books_query = db.session.query(BorrowersRecordDetails).join(Book).filter(
-            BorrowersRecordDetails.book_ID == Book.book_ID).filter(BorrowersRecordDetails.book_ID == id).all()
-    books = []
-
-    for book in books_query:
-        books.append(book.format())
-    return books

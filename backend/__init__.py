@@ -186,7 +186,7 @@ def create_app(test_config=None):
         except:
             abort(422)
 
-    @app.route('/books/borrowed/last_30_days', methods=['GET'])
+    @app.route('/books/borrowed/Last30Days', methods=['GET'])
     def get_books_borrowed_last_30_days():
         books = get_books_borrowed_in_certain_time(db, flag=True)
         if books is None:
@@ -210,7 +210,8 @@ def create_app(test_config=None):
 
     @app.route('/books/borrowed/<int:user_id>', methods=['GET'])
     def get_books_borrowed_by_user(user_id):
-        books = get_books_borrowed_by_id(user_id, user=True)
+        books = db.session.query(BorrowersRecordDetails).join(BorrowersRecords, BorrowersRecordDetails.borrowers_ID == BorrowersRecords.borrowers_ID).join(
+            Book, BorrowersRecordDetails.book_ID == Book.book_ID).filter(BorrowersRecords.member_ID == user_id).all().format()
         if books is None:
             abort(404)
 
@@ -221,7 +222,8 @@ def create_app(test_config=None):
 
     @app.route('/books/borrowed/<int:book_id>', methods=['GET'])
     def get_books_borrowed_by_id(book_id):
-        books = get_books_borrowed_by_id(book_id)
+        books = db.session.query(BorrowersRecordDetails).join(
+            Book, BorrowersRecordDetails.book_ID == Book.book_ID).filter(Book.book_ID == book_id).all()
         if books is None:
             abort(404)
 
