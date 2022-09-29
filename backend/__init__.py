@@ -76,6 +76,23 @@ def create_app(test_config=None):
             "success": True,
             "book": book,
         })
+    
+    
+    @app.route('/books/author', methods=['GET'])
+    def get_books_by_author(author):
+        books = Book.query.filter(Book.book_author == author).all()
+        formatted_books=paginate_books(books)
+
+        if books is None:
+            abort(404)
+        
+        return jsonify({
+            "success": True,
+            "result": formatted_books,
+            "books": len(books)
+        })
+
+
 
     @app.route('/books/<int:book_id>', methods=['DELETE'])
     def delete_book(book_id):
