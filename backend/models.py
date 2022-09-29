@@ -44,7 +44,20 @@ Book
 # book_ID | book_title | book_edition | book_author | book_publisher | book_copies | book_costs | book_remarks
 
 
-class Book(db.Model):
+class BaseClass(db.Model):
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+class Book(db.Model, BaseClass):
     __tablename__ = "Books"
 
     book_ID = Column(Integer, primary_key=True)
@@ -65,16 +78,11 @@ class Book(db.Model):
         self.book_costs = costs
         self.book_remarks = remarks
 
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
+    BaseClass.insert()
 
-    def update(self):
-        db.session.commit()
+    BaseClass.update()
 
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+    BaseClass.delete()
 
     def format(self):
         return {
@@ -105,16 +113,10 @@ class LibraryStaff(db.Model):
         self.staff_mobilenumber = number
         self.staff_category = category
 
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
+    BaseClass.insert()
 
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+    BaseClass.update()
+    BaseClass.delete()
 
     def format(self):
         return {
@@ -145,16 +147,10 @@ class Member(db.Model):
         self.member_mobile = mobile
         self.member_email = email
 
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
+    BaseClass.insert()
 
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+    BaseClass.update()
+    BaseClass.delete()
 
     def format(self):
         return {
@@ -184,16 +180,10 @@ class BorrowersRecords(db.Model):
         self.borrowers_dateborrowed = date_borrowed
         self.borrowers_duereturndate = return_date
 
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
+    BaseClass.insert()
 
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+    BaseClass.update()
+    BaseClass.delete()
 
     def format(self):
         return {
@@ -219,16 +209,11 @@ class BorrowersRecordDetails(db.Model):
         self.book_ID = book_id
         self.details_numberofcopies = number_of_copies
 
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
+    BaseClass.insert()
 
-    def update(self):
-        db.session.commit()
+    BaseClass.update()
 
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+    BaseClass.delete()
 
     def format(self):
         return {

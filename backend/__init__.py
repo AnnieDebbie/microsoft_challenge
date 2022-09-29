@@ -128,7 +128,8 @@ def create_app(test_config=None):
         new_remarks = body.get("edition", None)
 
         try:
-            book = Book(title=new_title,edition=new_edition, author=new_author, publisher=new_publisher, copies=new_copies, costs=new_costs, remarks=new_remarks )
+            book = Book(title=new_title, edition=new_edition, author=new_author,
+                        publisher=new_publisher, copies=new_copies, costs=new_costs, remarks=new_remarks)
             book.insert()
 
             selection = Book.query.order_by(Book.id).all()
@@ -192,5 +193,5 @@ def create_app(test_config=None):
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 4000))
-    app=create_app()
+    app = create_app()
     app.run(port=port)
