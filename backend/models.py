@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+from lib2to3.pytree import Base
 import numbers
 import os
 from sqlalchemy import Column, String, Integer, DateTime, Numeric, ForeignKey, create_engine
@@ -116,6 +118,7 @@ class LibraryStaff(db.Model):
     BaseClass.insert()
 
     BaseClass.update()
+
     BaseClass.delete()
 
     def format(self):
@@ -150,6 +153,7 @@ class Member(db.Model):
     BaseClass.insert()
 
     BaseClass.update()
+
     BaseClass.delete()
 
     def format(self):
@@ -183,6 +187,7 @@ class BorrowersRecords(db.Model):
     BaseClass.insert()
 
     BaseClass.update()
+
     BaseClass.delete()
 
     def format(self):
@@ -192,7 +197,6 @@ class BorrowersRecords(db.Model):
             "staff_id": self.staff_ID,
             "date_borrowed": self.borrowers_dateborrowed,
             "return_date": self.borrowers_duereturndate,
-
         }
 
 
@@ -221,5 +225,38 @@ class BorrowersRecordDetails(db.Model):
             "borrowers_id": self.borrowers_ID,
             "book_id": self.book_ID,
             "number_of_copies": self.details_numberofcopies
-
         }
+
+
+# SELECT p.* FROM Products as p join orderDetails od on p.productid = od.productid join orders o on o.orderID = od.orderId where OrderDate >= "1997-01-01"
+def get_books_borrowed_in_certain_time(db, start_date=0, end_date=0, flag=True):
+    thirty_days = datetime.now().date - timedelta(days=30)
+    if flag:
+        books_query = db.session.query(BorrowersRecords).join(BorrowersRecordDetails).join(Book).filter(
+            BorrowersRecordDetails.book_ID == Book.book_ID).filter(BorrowersRecords.borrowers_dateborrowed <= thirty_days).all()
+
+    else:
+        books_query = db.session.query(BorrowersRecords).join(BorrowersRecordDetails).join(Book).filter(
+            BorrowersRecordDetails.book_ID == Book.book_ID).filter(BorrowersRecords.borrowers_dateborrowed in range(start_date, end_date)).all()
+    books = []
+
+    for book in books_query:
+        books.append(book.format())
+    return books
+
+
+def get_books_borrowed_by_id(id, user=True):
+    # /Books/Borrowed/{UserID}
+    if user:
+        books_query = db.session.query(BorrowersRecordDetails).join(Book).filter(
+            BorrowersRecordDetails.book_ID == Book.book_ID).filter(BorrowersRecordDetails.borrowers_ID == id).all()
+
+    else:
+        # /Books/Borrowed/{BookID}
+        books_query = db.session.query(BorrowersRecordDetails).join(Book).filter(
+            BorrowersRecordDetails.book_ID == Book.book_ID).filter(BorrowersRecordDetails.book_ID == id).all()
+    books = []
+
+    for book in books_query:
+        books.append(book.format())
+    return books
