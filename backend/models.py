@@ -1,6 +1,6 @@
 import numbers
 import os
-from sqlalchemy import Column, String, Integer, DateTime, Numeric, create_engine
+from sqlalchemy import Column, String, Integer, DateTime, Numeric, ForeignKey, create_engine
 from flask_sqlalchemy import SQLAlchemy
 import json
 from dotenv import load_dotenv
@@ -164,5 +164,77 @@ class Member(db.Model):
             "date_of_birth": self.member_dateofbirth,
             "number": self.member_mobile,
             "email": self.member_email,
+
+        }
+
+
+class BorrowersRecords(db.Model):
+    __tablename__ = "borrowersrecords"
+    borrowers_ID = Column(Integer, primary_key=True)
+    member_ID = Column(Integer, ForeignKey("members.member_id"))
+    staff_ID = Column(Integer, ForeignKey("librarystaff.staff_id"))
+    borrowers_dateborrowed = Column(DateTime)
+    borrowers_duereturndate = Column(DateTime)
+
+    def __init__(self, borrowers_id, member_id, staff_id, date_borrowed,
+                 return_date, ):
+        self.borrowers_ID = borrowers_id
+        self.member_ID = member_id
+        self.staff_ID = staff_id
+        self.borrowers_dateborrowed = date_borrowed
+        self.borrowers_duereturndate = return_date
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def format(self):
+        return {
+            "borrowers_id": self.borrowers_ID,
+            "member_id": self.member_ID,
+            "staff_id": self.staff_ID,
+            "date_borrowed": self.borrowers_dateborrowed,
+            "return_date": self.borrowers_duereturndate,
+
+        }
+
+
+class BorrowersRecordDetails(db.Model):
+    __tablename__ = "borrowersrecorddetails"
+    detail_ID = Column(Integer, primary_key=True)
+    borrowers_ID = Column(Integer, ForeignKey("borrowersrecords.borrowers_id"))
+    book_ID = Column(Integer, ForeignKey("books.book_id"))
+    details_numberofcopies = Column(Integer)
+
+    def __init__(self, detail_id, borrowers_id,  book_id, number_of_copies):
+        self.detail_ID = detail_id
+        self.borrowers_ID = borrowers_id
+        self.book_ID = book_id
+        self.details_numberofcopies = number_of_copies
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def format(self):
+        return {
+            "detail_id": self.detail_ID,
+            "borrowers_id": self.borrowers_ID,
+            "book_id": self.book_ID,
+            "number_of_copies": self.details_numberofcopies
 
         }
